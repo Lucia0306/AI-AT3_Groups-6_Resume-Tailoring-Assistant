@@ -5,9 +5,15 @@ import json
 
 from backend.file_extractors import extract_resume_text
 from backend.modules.resume_parser import parse_resume
+from backend.modules.jd_parsing import parse_jd
 from backend.modules.tailored_resume_generator import generate_tailored_resume_json
 
 app = FastAPI()
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 @app.post("/analyze")
@@ -22,30 +28,25 @@ async def analyze(
         temp_path = tmp.name
 
     try:
-        # 1. PDF -> text
+        # 1. Extract resume text from uploaded file
         resume_text = extract_resume_text(temp_path)
 
-        # 2. Resume parsing
+        # 2. Parse JD
+        jd_parsed_dict = parse_jd(jd_text)
+        jd_parsed_str = json.dumps(jd_parsed_dict)
+
+        # 3. Parse resume
         resume_parsed_str = parse_resume(resume_text)
 
-        # 3. Placeholder JD parsing result for now
-        jd_parsed_str = json.dumps({
-            "job_title": None,
-            "required_skills": [],
-            "preferred_skills": [],
-            "role_keywords": [],
-            "responsibilities": [],
-            "experience": {}
-        })
-
-        # 4. Placeholder alignment result for now
-        alignment_str = json.dumps({
+        # 4. Temporary placeholder alignment
+        alignment_dict = {
             "matched": [],
             "missing": [],
             "weak_matches": []
-        })
+        }
+        alignment_str = json.dumps(alignment_dict)
 
-        # 5. Tailored resume generation
+        # 5. Generate tailored resume
         tailored_resume_str = generate_tailored_resume_json(
             jd_json=jd_parsed_str,
             resume_json=resume_parsed_str,
@@ -59,14 +60,10 @@ async def analyze(
             "alignment": alignment_str,
             "tailored_resume": tailored_resume_str
         }
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
