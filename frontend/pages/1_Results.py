@@ -103,13 +103,12 @@ div[data-testid="stExpander"] {
 </style>
 """, unsafe_allow_html=True)
 
-top1, top2 = st.columns([5, 2])
+top1, top2 = st.columns([5, 2], vertical_alignment="center")
 with top1:
     st.title("Tailored Resume Results")
     st.caption("Review the tailored resume, key changes, and matching summary.")
 with top2:
-    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
-    if st.button("← Back to Input", use_container_width=True):
+    if st.button("← Back to Input", width="stretch"):
         st.switch_page("app.py")
 
 result = st.session_state.analysis_result
