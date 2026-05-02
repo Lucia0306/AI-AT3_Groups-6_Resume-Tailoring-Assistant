@@ -2,6 +2,7 @@ import json
 import streamlit as st
 from fpdf import FPDF
 import io
+import re
 
 
 def generate_pdf(tailored_data=None, full_text=None):
@@ -56,9 +57,10 @@ def generate_pdf(tailored_data=None, full_text=None):
 
 
 st.set_page_config(
-    page_title="Tailored Resume Results",
+    page_title="Resume Tailoring Assistant",
     page_icon="📄",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
 if "analysis_result" not in st.session_state or st.session_state.analysis_result is None:
@@ -101,12 +103,13 @@ div[data-testid="stExpander"] {
 </style>
 """, unsafe_allow_html=True)
 
-top1, top2 = st.columns([6, 1])
+top1, top2 = st.columns([5, 2])
 with top1:
     st.title("Tailored Resume Results")
     st.caption("Review the tailored resume, key changes, and matching summary.")
 with top2:
-    if st.button("← Back"):
+    st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+    if st.button("← Back to Input", use_container_width=True):
         st.switch_page("app.py")
 
 result = st.session_state.analysis_result
@@ -144,6 +147,7 @@ with tab_resume:
     try:
         tailored = json.loads(raw)
         full_resume_text = tailored.get("full_resume_text", "")
+        full_resume_text = re.sub(r"\n{3,}", "\n\n", full_resume_text).strip()
 
         if full_resume_text:
             with st.container(border=True):
@@ -298,22 +302,3 @@ with tab_mods:
                 st.info("No bullet rewrites generated.")
     except json.JSONDecodeError:
         st.error("Tailored resume output is not valid JSON.")
-
-with st.expander("Advanced / Technical Output", expanded=False):
-    tech1, tech2 = st.columns(2)
-
-    with tech1:
-        st.subheader("Parsed JD")
-        raw = result.get("jd_parsed", "{}")
-        try:
-            st.json(json.loads(raw))
-        except json.JSONDecodeError:
-            st.text(raw)
-
-    with tech2:
-        st.subheader("Parsed Resume")
-        raw = result.get("resume_parsed", "{}")
-        try:
-            st.json(json.loads(raw))
-        except json.JSONDecodeError:
-            st.text(raw)

@@ -20,6 +20,7 @@ st.set_page_config(
     page_title="Resume Tailoring Assistant",
     page_icon="📄",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
 # Session state initialization
@@ -33,8 +34,8 @@ if "show_modifications" not in st.session_state:
 st.markdown("""
 <style>
 .block-container {
-    padding-top: 1.5rem;
-    padding-bottom: 2rem;
+    padding-top: 0.8rem;
+    padding-bottom: 1.2rem;
     max-width: 1180px;
 }
 h1, h2, h3 {
@@ -73,14 +74,14 @@ button[kind="secondary"] {
 # Header 
 st.markdown("""
 <div style="
-    padding: 1.6rem 1.8rem;
+    padding: 1.1rem 1.4rem;
     border-radius: 20px;
     background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
     border: 1px solid rgba(0,0,0,0.06);
     margin-bottom: 1rem;
 ">
-    <h1 style="margin: 0; font-size: 2.5rem; line-height: 1.1;">AI Resume Tailoring Assistant</h1>
-    <p style="margin: 0.8rem 0 0 0; font-size: 1.05rem; color: #4b5563;">
+    <h1 style="margin: 0; font-size: 2.1rem; line-height: 1.05;">AI Resume Tailoring Assistant</h1>
+    <p style="margin: 0.45rem 0 0 0; font-size: 0.98rem; color: #4b5563;">
         Match your existing resume to a target role with structured analysis and controlled AI rewriting.
     </p>
 </div>
